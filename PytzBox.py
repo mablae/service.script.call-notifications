@@ -113,9 +113,13 @@ class PytzBox:
         search = re.search('<SID>(.*?)</SID>', response.read())
         if search:
             self.__sid = search.group(1)
+            try:
+                if int(self.__sid) == 0:
+                    raise self.LoginFailedException('could not login (sid is %s)' % self.__sid)
+            except ValueError:
+                pass
             return True
         else:
-            print "Could not login"
             return False
 
 
@@ -199,8 +203,8 @@ class PytzBox:
 
         try:
             xml.sax.parseString(xml_phonebook, handler=handler)
-        except Exception, msg:
-            print "Fehler %s aufgetreten" % msg
+        except Exception, e:
+            raise ValueError('could not parse phonebook data (are you logged in?): %s' % str(e))
 
         return handler.phone_book
 
