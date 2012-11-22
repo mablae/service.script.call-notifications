@@ -13,6 +13,7 @@ class PytzBox:
     __host = False
     __sid = None
     __protocol = 'http'
+    __login_requirement = 0
 
     __url_login_webcm    = '{protocol}://{host}/cgi-bin/webcm'
     __url_login_fmwcfg   = '{protocol}://{host}/cgi-bin/firmwarecfg'
@@ -33,29 +34,41 @@ class PytzBox:
         self.__password = password
         self.__host = host
 
-        if self.__isLoginRequired() and self.__password is False:
+        self.__login_requirement = self.__requireLogin()
+
+        if self.__login_requirement and self.__password is False:
             raise self.LoginRequiredException('no password given')
 
 
-    def __isLoginRequired(self):
+    def __requireLogin(self):
 
         try:
             response = urllib2.urlopen(
                 self.__url_login_webcm.format(protocol=self.__protocol, host=self.__host),
                 self.__data_sid_challenge
-            ).read()
+            )
         except socket.error, e:
             raise self.BoxUnreachableException(str(e))
         except IOError, e:
             raise self.BoxUnreachableException(str(e))
         else:
-            is_write_access_match = re.search(r".*<iswriteaccess>(\d)</iswriteaccess>.*", response, re.MULTILINE | re.IGNORECASE)
-            if is_write_access_match:
-                result = int(is_write_access_match.group(1))
-                if result == 0:
-                    return True
+            if response.getcode() != 200:
+                # old style
+                return 1
+            else:
+                # new style
+                is_write_access_match = re.search(r".*<iswriteaccess>(\d)</iswriteaccess>.*", response.read(), re.MULTILINE | re.IGNORECASE)
+                sid_match = re.search('<SID>(.*?)</SID>', response.read())
+                if is_write_access_match:
+                    result = int(is_write_access_match.group(1))
+                    if result == 0:
+                        if sid_match and int(sid_match.group(1)) != 0:
+                            self.__sid = sid_match.group(1)
+                            return 0
+                        else:
+                            return 2
 
-        return False
+        return 0
 
 
     def __loginSid(self):
@@ -220,8 +233,12 @@ class PytzBox:
 
 
     def login(self):
-        if not self.__loginSid():
+
+        if self.__login_requirement == 2:
+            self.__loginSid()
+        elif self.__login_requirement == 1:
             self.__loginLegacy()
+
         return self
 
 
