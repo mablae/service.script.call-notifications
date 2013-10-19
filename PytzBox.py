@@ -1,4 +1,5 @@
 
+import urllib
 import urllib2
 import re
 import socket
@@ -7,32 +8,51 @@ import mimetools
 import xml.sax
 
 
+__doc__="""
+PytzBox
+
+usage:
+  ./PytzBox.py [--host=<fritz.box>] [--username=<user>] [--password=<pass>] [--action=<getphonebook>]
+
+options:
+  --username=<user>     username usually not required
+  --password=<pass>     admin password [default: none]
+  --host=<fritz.box>    ip address / hostname [default: fritz.box]
+  --action=<action>     what to do ... [default: getphonebook]
+
+"""
+
 class PytzBox:
 
     __password = False
     __host = False
+    __user = False
     __sid = None
     __protocol = 'http'
     __login_requirement = 0
 
-    __url_login_webcm    = '{protocol}://{host}/cgi-bin/webcm'
-    __url_login_fmwcfg   = '{protocol}://{host}/cgi-bin/firmwarecfg'
-    __data_sid_challenge = 'getpage=../html/login_sid.xml'
-    __data_login_legacy  = 'getpage=../html/de/menus/menu2.html&errorpage=../html/index.html&var:lang=de&var:pagename=home&var:menu=home&=&login:command/password={password}'
-    __data_login_sid     = 'login:command/response={response}&getpage=../html/login_sid.xml'
+    __url_login_webcm        = '{protocol}://{host}/cgi-bin/webcm'
+    __url_login_fmwcfg       = '{protocol}://{host}/cgi-bin/firmwarecfg'
+    __url_sid_lua_challenge = '{protocol}://{host}//login_sid.lua'
+    __data_sid_challenge     = 'getpage=../html/login_sid.xml'
+    __data_login_legacy      = 'getpage=../html/de/menus/menu2.html&errorpage=../html/index.html&var:lang=de&var:pagename=home&var:menu=home&=&login:command/password={password}'
+    __data_login_sid         = 'login:command/response={response}&getpage=../html/login_sid.xml'
 
     class LoginRequiredException(Exception): pass
+    class UnkownLoginVersionException(Exception): pass
     class BoxUnreachableException(Exception): pass
     class UnsupportedCharInPasswordException(Exception): pass
     class LoginFailedException(Exception): pass
     class RequestFailedException(Exception): pass
 
-    def __init__(self, password=False, host="fritz.box"):
+    def __init__(self, password=False, host="fritz.box", username=False):
 
         socket.setdefaulttimeout(10)
 
         self.__password = password
         self.__host = host
+        if username:
+            self.__user = username
 
         self.__login_requirement = self.__requireLogin()
 
@@ -53,20 +73,39 @@ class PytzBox:
             raise self.BoxUnreachableException(str(e))
         else:
             if response.getcode() != 200:
-                # old style
+                # 1st style
                 return 1
             else:
-                # new style
+                # 2nd style
                 is_write_access_match = re.search(r".*<iswriteaccess>(\d)</iswriteaccess>.*", response.read(), re.MULTILINE | re.IGNORECASE)
                 sid_match = re.search('<SID>(.*?)</SID>', response.read())
                 if is_write_access_match:
-                    result = int(is_write_access_match.group(1))
-                    if result == 0:
+                    write_access_result = int(is_write_access_match.group(1))
+                    if write_access_result == 0:
                         if sid_match and int(sid_match.group(1)) != 0:
                             self.__sid = sid_match.group(1)
                             return 0
                         else:
                             return 2
+        try:
+            response = urllib2.urlopen(
+                self.__url_sid_lua_challenge.format(protocol=self.__protocol, host=self.__host)
+            )
+        except socket.error, e:
+            raise self.BoxUnreachableException(str(e))
+        except IOError, e:
+            raise self.BoxUnreachableException(str(e))
+        else:
+            is_session_info_match = re.search(r".*<SessionInfo>.*</SessionInfo>.*", response.read(), re.MULTILINE | re.IGNORECASE)
+            if is_session_info_match:
+                # 3rd style
+                sid_match = re.search('<SID>(.*?)</SID>', response.read())
+                if sid_match and int(sid_match.group(1)) != 0:
+                    self.__sid = sid_match.group(1)
+                    return 0
+                else:
+                    return 3
+            print response.read()
 
         return 0
 
@@ -75,10 +114,15 @@ class PytzBox:
 
         # request challenge
         try:
-            response = urllib2.urlopen(
-                self.__url_login_webcm.format(protocol=self.__protocol, host=self.__host),
-                self.__data_sid_challenge
-            )
+            if self.__login_requirement == 2:
+                response = urllib2.urlopen(
+                    self.__url_login_webcm.format(protocol=self.__protocol, host=self.__host),
+                    self.__data_sid_challenge
+                )
+            elif self.__login_requirement == 3:
+                response = urllib2.urlopen(
+                    self.__url_sid_lua_challenge.format(protocol=self.__protocol, host=self.__host)
+                )
         except socket.error, e:
             raise self.BoxUnreachableException(str(e))
         except IOError, e:
@@ -110,10 +154,19 @@ class PytzBox:
 
         # Answer the challenge
         try:
-            response = urllib2.urlopen(
-                self.__url_login_webcm.format(protocol=self.__protocol, host=self.__host),
-                self.__data_login_sid.format(response=response_bf)
-            )
+            if self.__login_requirement == 2:
+                response = urllib2.urlopen(
+                    self.__url_login_webcm.format(protocol=self.__protocol, host=self.__host),
+                    self.__data_login_sid.format(response=response_bf)
+                )
+            elif self.__login_requirement == 3:
+                username=''
+                if self.__user:
+                    username=self.__user
+                response = urllib2.urlopen(
+                    self.__url_sid_lua_challenge.format(protocol=self.__protocol, host=self.__host),
+                    urllib.urlencode(dict(response=response_bf, username=username))
+                )
         except socket.error, e:
             raise self.BoxUnreachableException(str(e))
         except IOError, e:
@@ -233,11 +286,15 @@ class PytzBox:
 
 
     def login(self):
-
-        if self.__login_requirement == 2:
+        if self.__login_requirement is False:
+            pass
+        elif self.__login_requirement == 3:
+            self.__loginSid()
+        elif self.__login_requirement == 2:
             self.__loginSid()
         elif self.__login_requirement == 1:
             self.__loginLegacy()
+        else: raise self.UnkownLoginVersionException(self.__login_requirement)
 
         return self
 
@@ -278,5 +335,13 @@ class PytzBox:
 
 if __name__ == '__main__':
 
+    import docopt
+
+    arguments = docopt.docopt(__doc__);
+
     from pprint import pprint
-    pprint( PytzBox(password='Secret', host='fritz.box').login().getPhonebook() )
+
+    box = PytzBox(username=arguments['--username'], password=arguments['--password'], host=arguments['--host']).login()
+
+    if arguments['--action'] == 'getphonebook':
+        pprint( box.getPhonebook() )
