@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="xbmc.addon.call-notifications" name="Call Notifications" version="0.2.0"
+	provider-name="mablae">
+	<requires>
+		<import addon="xbmc.python" version="2.1.0" />
+		<import addon="script.module.twisted"  />
+	</requires>
+	<extension point="xbmc.service" library="service.py"
+		start="startUpService">
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Show incoming calls in XBMC!</summary>
+		<description>Works with FritzBox and Ncid. Please give feedback to improve!</description>
+		<disclaimer>This addon makes no warranties, expressed or implied, and
+			hereby disclaims and negates all other warranties, including without
+			limitation, implied warranties or conditions of merchantability,
+			fitness for a particular purpose, or non-infringement of intellectual
+			property or other violation of rights.</disclaimer>
+		<license>GNU GPL v3</license>
+		<platform>all</platform>
+	</extension>
+</addon>
