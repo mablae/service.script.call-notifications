@@ -3,7 +3,7 @@
 	provider-name="mablae">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
-		<import addon="script.module.twisted"  />
+		<import addon="script.module.twisted" />
 	</requires>
 	<extension point="xbmc.service" library="service.py"
 		start="startUpService">
