@@ -1,3 +1,4 @@
+from twisted.internet.protocol import ReconnectingClientFactory
 
 
 class NcidClientFactory(ReconnectingClientFactory):

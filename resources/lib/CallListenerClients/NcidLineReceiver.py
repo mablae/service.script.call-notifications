@@ -1,4 +1,5 @@
-
+import datetime
+from twisted.protocols.basic import LineReceiver
 
 class NcidLineReceiver(LineReceiver):
         def __init__(self):
@@ -14,11 +15,11 @@ class NcidLineReceiver(LineReceiver):
                 self.line = ''
 
         def notifyAndReset(self):
-                notifyCall(self.date, self.number, self.caller)
+                # notifyCall(self.date, self.number, self.caller)
                 self.resetValues()
 
         def lineReceived(self, line):
-                debug("[NcidLineReceiver] lineReceived: %s" % line)
+                print("[NcidLineReceiver] lineReceived: %s" % line)
                     #200 NCID Server: ARC_ncidd 0.01
                     #CIDLOG: *DATE*21102010*TIME*1454*LINE**NMBR*089999999999*MESG*NONE*NAME*NO NAME*
                     #CIDLOG: *DATE*21102010*TIME*1456*LINE**NMBR*089999999999*MESG*NONE*NAME*NO NAME*
@@ -28,7 +29,7 @@ class NcidLineReceiver(LineReceiver):
                     #we don't want to do anything with log-entries
                 if line.startswith("CID:"):
                         line = line[6:]
-                        debug("[NcidLineReceiver.lineReceived] filtered Line: %s" % line)
+                        print("[NcidLineReceiver.lineReceived] filtered Line: %s" % line)
                 else:
                         return
 
@@ -50,7 +51,7 @@ class NcidLineReceiver(LineReceiver):
                 self.date = date.strftime("%d.%m.%Y - %H:%M")
 
                 if not self.number:
-                        debug("[NcidLineReceiver] lineReceived: no number")
+                        print("[NcidLineReceiver] lineReceived: no number")
                         self.number = _("number suppressed")
                         self.caller = _("UNKNOWN")
                 else:
