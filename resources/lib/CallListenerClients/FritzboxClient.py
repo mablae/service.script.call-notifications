@@ -1,30 +1,32 @@
 #!/usr/bin/python 
 
-import telnetlib
-import sys
+
+from CallListenerClients.AbstractClient import AbstractClient
+from CallListenerClients.FritzboxClientFactory import FritzboxClientFactory
+
+from twisted.internet import reactor
 
 
-class FritzboxClient:
+class FritzboxClient():
+        def __init__(self, hostname, port=1012):
+            self.hostname = hostname
+            self.port = port
+            self.desc = None
+            # TODO: add check for enabled setting
+            self.connect()
 
-    host = "fritz.box"
-    port = 1012
-    tn = None
+        def connect(self):
+                self.abort()
+                # TODO: add check for enabled setting
+                factory = FritzboxClientFactory()
+                self.desc = (factory, reactor.connectTCP(self.hostname, self.port, factory))
 
-    def __init__(self, host, port):
-        print("Started FritzboxClient...")
-        self.host = host
-        self.port = port
-        self.tn = telnetlib.Telnet(self.port, self.port )
+        def shutdown(self):
+                self.abort()
 
-    def startListening(self):
-        try:
-            while True:
-                event = self.tn.read_until( b"\n" ).decode( "utf-8" )
-                edata = event.split( ';' )
-                print(edata)
-                if edata[1] == "RING":
-                    caller = edata[3]
-                    print("Incoming call from %s" % caller)
-
-        except EOFError as eof:
-            print("Connection closed by remote host.")
+        def abort(self):
+                if self.desc is not None:
+                        self.desc[0].hangup_ok = True
+                        self.desc[0].stopTrying()
+                        self.desc[1].disconnect()
+                        self.desc = None
