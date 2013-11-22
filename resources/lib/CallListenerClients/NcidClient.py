@@ -1,27 +1,31 @@
 #!/usr/bin/python
 
-import telnetlib
-import sys
+from zope.interface import implements
+from CallListenerClients import IClient
+
 
 class NcidClient:
-        def __init__(self):
-                self.dialog = None
-                self.desc = None
-                if config.plugins.NcidClient.enable.value:
-                        self.connect()
+    implements(IClient)
 
-        def connect(self):
-                self.abort()
-                if config.plugins.NcidClient.enable.value:
-                        factory = NcidClientFactory()
-                        self.desc = (factory, reactor.connectTCP(config.plugins.NcidClient.hostname.value, config.plugins.NcidClient.port.value, factory))
+    def __init__(self):
+        self.dialog = None
+        self.desc = None
+        if config.plugins.NcidClient.enable.value:
+            self.connect()
 
-        def shutdown(self):
-                self.abort()
+    def connect(self):
+        self.abort()
+        if config.plugins.NcidClient.enable.value:
+            factory = NcidClientFactory()
+            self.desc = (factory, reactor.connectTCP(config.plugins.NcidClient.hostname.value,
+                                                     config.plugins.NcidClient.port.value, factory))
 
-        def abort(self):
-                if self.desc is not None:
-                        self.desc[0].hangup_ok = True
-                        self.desc[0].stopTrying()
-                        self.desc[1].disconnect()
-                        self.desc = None
+    def shutdown(self):
+        self.abort()
+
+    def abort(self):
+        if self.desc is not None:
+            self.desc[0].hangup_ok = True
+            self.desc[0].stopTrying()
+            self.desc[1].disconnect()
+            self.desc = None

@@ -1,13 +1,14 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 
-
-from CallListenerClients.AbstractClient import AbstractClient
+from CallListenerClients import IClient
 from CallListenerClients.FritzboxClientFactory import FritzboxClientFactory
 
 from twisted.internet import reactor
+from zope.interface import implements
 
 
 class FritzboxClient():
+        implements(IClient)
         def __init__(self, hostname, port=1012):
             self.hostname = hostname
             self.port = port
