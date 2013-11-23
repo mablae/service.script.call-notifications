@@ -13,19 +13,4 @@ class KlicktelDeResolver():
         resultName = exp.search(lookup)
         if resultName != None:
             return resultName.group(1).encode("utf-8")
-        else:
-            return "Unknown"
-
-def main():
-    kt = KlicktelDeResolver()
-    print("Is %s implementing the ReverseSearchInterface?" % kt.__class__.__name__)
-
-    print("... %s" % ResolverInterface.providedBy(kt))
-    print("")
-    print(kt.findName("042643113"))
-    print(kt.findName("042641331"))
-    print(kt.findName("042643161"))
-    print(kt.findName("04288 392"))
-
-if __name__ == '__main__':
-    main()
+        return "Unknown"
