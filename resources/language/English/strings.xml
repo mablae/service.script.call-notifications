@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+
+    <!-- Plugin settings strings -->
+    <string id="30200">Fritzbox</string>
+    <string id="30201">Enabled</string>
+    <string id="30202">Host</string>
+    <string id="30203">Port</string>
+    <string id="30204">Listen Port</string>
+    <string id="30205">Ncid Client</string>
+    <string id="30206">YAC Server</string>
+    <string id="30207">General</string>
+    <string id="30208">Enable Debugging</string>
+    <string id="30209">Pause Playback</string>
+    <string id="30210">Mute Volume</string>
+    <string id="30211">Lower Volume</string>
+    <string id="30212">... to</string>
+    <string id="30213">What should happen on Incoming Calls?</string>
+    <string id="30214">Other settings</string>
+
+
+    <!-- messages -->
+    <string id="30600">Error</string>
+    <string id="30601">No results!</string>
+    <string id="30602">No recent activity</string>
+    <string id="30603">Playback failed</string>
+    <string id="30604">Download complete</string>
+    <string id="30605">Preparing download</string>
+    <string id="30606">Verify your age in a browser</string>
+    <string id="30607">Skipping download</string>
+    <string id="30608">YouTube doesn't seem to know this video id!</string>
+    <string id="30609">Login Failed</string>
+    <string id="30610">Refinement cleared</string>
+    <string id="30611">Download folder not set</string>
+    <string id="30612">Live steam not available!</string>
+    <string id="30613">Added contact</string>
+    <string id="30614">Removed contact</string>
+    <string id="30615">Playlist empty</string>
+    <string id="30616">Refinement added</string>
+    <string id="30617">Unknown error</string>
+    <string id="30618">Couldn't locate video url</string>
+    <string id="30619">RTMPe download not supported</string>
+    <string id="30620">Stream type not supported</string>
+    <string id="30621">Bad username or password</string>
+    <string id="30622">Playback requires valid YouTube account</string>
+    <string id="30623">Maximum login attempts tried.</string>
+    <string id="30624">Downloading</string>
+    <string id="30625">Download Failed</string>
+    <string id="30626">RTMPe playback currently not supported</string>
+    <string id="30627">Please provide 2-factor authentication PIN</string>
+    <string id="30628">Please provide your password</string>
+    <string id="30629">SSL protocol not supported.</string>
+</strings>
