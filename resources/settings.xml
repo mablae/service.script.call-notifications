@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="30207">
+        <setting label="30213" type="lsep" />
+        <setting label="30209" id="general.pause_playback.enabled" type="bool" default="false" />
+        <setting label="30210" id="general.mute_volume.enabled" type="bool" default="false" />
+        <setting label="30212" id="general.lower_volume.to" type="slider" default="70" range="10|10|90" option="percent" enable="eq(-1,true)" />
+        <setting label="30214" type="lsep" />        <setting label="30211" id="general.lower_volume.enabled" type="bool" default="false" />
+
+        <setting label="30208" id="general.debugging" type="bool" default="false" />
+    </category>
+
+    <category label="30205">
+        <setting label="30201" type="bool" id="client.ncid.enabled" default="false" />
+        <setting label="30202" type="text" id="client.ncid.host" default="localhost" enable="eq(-1,true)"/>
+        <setting label="30203" type="number" id="client.ncid.port" default="3333" enable="eq(-2,true)"/>
+    </category>
+
+    <category label="30200">
+        <setting label="30201" type="bool" id="client.fritzbox.enabled" default="false" />
+        <setting label="30202" type="text" id="client.fritzbox.host" default="fritz.box"  enable="eq(-1,true)"/>
+        <setting label="30203" type="number" id="client.fritzbox.port" default="1012"  enable="eq(-2,true)"/>
+    </category>
+
+    <category label="30206">
+        <setting label="30201" type="bool" id="server.yac.enabled" default="false" />
+        <setting label="30204" type="number" id="server.yac.listen_port" default="10629"  enable="eq(-1,true)"/>
+    </category>
+
+
+</settings>
