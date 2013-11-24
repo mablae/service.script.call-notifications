@@ -10,6 +10,7 @@
 	<extension point="xbmc.service" library="service.py"
 		start="startUpService">
 	</extension>
+    <extension point="xbmc.python.module" library="resources/lib" />
 	<extension point="xbmc.addon.metadata">
 		<summary>Show incoming calls in XBMC!</summary>
 		<description>Works with FritzBox and Ncid. Please give feedback to improve!</description>
