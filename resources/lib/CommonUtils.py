@@ -14,7 +14,7 @@ class Caller:
         return {
             'caller': self.caller,
             'number': self.number
-                }
+        }
 
 
 class Event:
@@ -42,4 +42,4 @@ class Event:
     __iadd__ = handle
     __isub__ = unhandle
     __call__ = fire
-    __len__  = getHandlerCount
+    __len__ = getHandlerCount
