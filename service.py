@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
+import sys
+
 from twisted.internet import reactor
 from twisted.internet import task
-import sys
+
 from CallListenerClients.FritzboxClient import FritzboxClient
+from CallListenerClients.NcidClient import NcidClient
 from Yac.YacServer import YacServer
 
 runningOutsideXbmc = False
@@ -12,6 +15,7 @@ try:
 except ImportError, e:
     print "Could not find xbmc modules!"
     sys.exit()
+
 
 clientPool = {}
 serverPool = {}
@@ -30,8 +34,6 @@ def handleIncomingCall(caller):
 
 
 def initServices():
-    #xbmc.log('initServices() running...', xbmc.LOGDEBUG)
-
     if parseBoolString(xbmcAddon.getSetting("server.yac.enabled")):
         xbmc.log("Starting YAC Server ", xbmc.LOGDEBUG)
         serverPool['yac'] = YacServer(int(xbmcAddon.getSetting("server.yac.listen_port")), handleIncomingCall)
@@ -41,23 +43,20 @@ def initServices():
         #xbmc.log("Starting Fritzbox Client", xbmc.LOGDEBUG)
         clientPool['fritzbox'] = FritzboxClient(xbmcAddon.getSetting("client.fritzbox.host"), handleIncomingCall)
 
+    if parseBoolString(xbmcAddon.getSetting("client.ncid.enabled")):
+        #xbmc.log("Starting Fritzbox Client", xbmc.LOGDEBUG)
+        clientPool['ncid'] = NcidClient(xbmcAddon.getSetting("client.ncid.host"), port=int(xbmcAddon.getSetting("client.ncid.port")), onCallIncoming=handleIncomingCall)
 
 def bootServices():
     initServices()
-
-    # TODO Emulate SIGTERM inside XBMC in correct way
     l = task.LoopingCall(shouldWeExit)
     l.start(0.5)
-
     reactor.run(installSignalHandlers=0)
-
 
 def shouldWeExit():
     if xbmc.abortRequested == True:
         xbmc.log("shouldWeExit() - Indeed, we better stop reactor now...", xbmc.LOGDEBUG)
         reactor.stop()
-        sys.exit()
-
 
 if __name__ == "__main__":
     bootServices()
