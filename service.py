@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys
+import sys, os, json
 
 from twisted.internet import reactor
 from twisted.internet import task
@@ -23,7 +23,8 @@ resolverPool = {}
 xbmcAddon = xbmcaddon.Addon()
 xbmcDialog = xbmcgui.Dialog()
 
-notificationTimeout = xbmcAddon.getSetting("notification.duration", 7000)
+notificationTimeout = int(int(xbmcAddon.getSetting("notification.duration"))*1000)
+notificationIcon = os.path.join(xbmcAddon.getAddonInfo("path"), "resources", "media", "icon_ring.png")
 
 
 def parseBoolString(theString):
@@ -34,7 +35,31 @@ def handleIncomingCall(caller):
 
     if caller.caller == "Unknown":
         caller.caller = xbmcaddon.getLocalizedString(30602)
-    xbmcDialog.notification(xbmcAddon.getLocalizedString(30601) % caller.caller, caller.number, notificationTimeout)
+
+    xbmc.executebuiltin("XBMC.Notification(%s,%s,%s,%s)" % (xbmcAddon.getLocalizedString(30601) % caller.caller,
+                                                            caller.number,
+                                                            int(notificationTimeout),
+                                                            notificationIcon
+                                                            ))
+
+    activePlayers = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Player.GetActivePlayers", "id": 1}'))
+
+
+    if parseBoolString(xbmcAddon.getSetting("general.pause_playback.enabled")):
+        for player in activePlayers["result"]:
+            xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Player.PlayPause", "params": { "playerid": %s, "play": false }, "id": 1}' % player["playerid"])
+
+    if parseBoolString(xbmcAddon.getSetting("general.lower_volume.enabled")):
+        targetVolume = int(xbmcAddon.getSetting("general.lower_volume.to"))
+        currentVolume = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Application.GetProperties", "params": { "properties": ["volume"] }, "id": 1}'))
+        if int(currentVolume["result"]["volume"]) >= targetVolume:
+            xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Application.SetVolume", "params": { "volume": %s }, "id": 1}' % targetVolume)
+
+    if parseBoolString(xbmcAddon.getSetting("general.mute_volume.enabled")):
+        mutedState  = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Application.GetProperties", "params": { "properties": ["muted"] }, "id": 1}'))
+        if not mutedState['result']['muted']:
+            xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Application.SetMute", "params": { "mute": true }, "id": 1}')
+
 
 
 def initServices():
