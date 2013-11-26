@@ -1,0 +1,58 @@
+
+v. 0.5.0
+ - version bump to 0.5.0
+ - Main function added
+ - cp error
+ - new ring icon
+ - Added setting for notification timeout
+ - Removed unused Crap
+ - CodeSyle
+ - Changes and cleanup on FritzboxClient
+ - Introduce NcidClient in main service.py
+ - Changes in NcidClient
+ - Removed +x flag from fanart.jpg
+ - Updated README.md
+ - Version bump to 0.4.0
+ - New language strings
+ - CS
+ - Small fix in settings.xml
+ - Better exit for reactor, still not perfect. Show notification in xbmc for first time :)
+ - First version running inside XBMC. twisted.internet.reactor seems to work.
+ - Fix Slider in settings
+ - Unit Tests should be separated
+ - CS
+ - Fanart added
+ - Added gimp versions of images
+ - More Cleanup in Yac module
+ - Version bump to v0.3.0
+ - Readme added
+ - New icons
+ - cleanup
+ - Added Fritzbox test
+ - refactor the ReverseSearch to working plugins (thanks urlresolver <3)
+ - Added language files
+ - Added Settings
+ - CommonUtils class for Event System and Caller()
+ - Rework of the YAC Server
+ - Add Interface to NcidClient
+ - Changes on FritzboxClient
+ - whitespace fix
+ - Added xbmc.addon.call-notifications to repo
+ - New Icon
+ - Small fix
+ - Added xbmc.addon.call-notifications to repo
+
+v. 0.4.0
+ - version bump to 0.5.0
+ - Main function added
+ - cp error
+ - new ring icon
+ - Added setting for notification timeout
+ - Removed unused Crap
+ - CodeSyle
+ - Changes and cleanup on FritzboxClient
+ - Introduce NcidClient in main service.py
+ - Changes in NcidClient
+ - Removed +x flag from fanart.jpg
+ - Updated README.md
+
