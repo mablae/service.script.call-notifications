@@ -6,17 +6,18 @@
     <string id="30201">Enabled</string>
     <string id="30202">Host</string>
     <string id="30203">Port</string>
-    <string id="30204">Listen Port</string>
-    <string id="30205">Ncid Client</string>
-    <string id="30206">YAC Server</string>
+    <string id="30204">Listen port</string>
+    <string id="30205">Ncid client</string>
+    <string id="30206">YAC server</string>
     <string id="30207">General</string>
-    <string id="30208">Enable Debugging</string>
-    <string id="30209">Pause Playback</string>
-    <string id="30210">Mute Volume</string>
-    <string id="30211">Lower Volume</string>
+    <string id="30208">Enable debugging</string>
+    <string id="30209">Pause playback</string>
+    <string id="30210">Mute volume</string>
+    <string id="30211">Lower volume</string>
     <string id="30212">... to</string>
-    <string id="30213">What should happen on Incoming Calls?</string>
+    <string id="30213">What should happen on incoming calls?</string>
     <string id="30214">Other settings</string>
+    <string id="30215">Notification duration</string>
 
 
     <!-- messages -->

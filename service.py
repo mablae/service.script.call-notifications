@@ -23,15 +23,18 @@ resolverPool = {}
 xbmcAddon = xbmcaddon.Addon()
 xbmcDialog = xbmcgui.Dialog()
 
+notificationTimeout = xbmcAddon.getSetting("notification.duration", 7000)
+
 
 def parseBoolString(theString):
     return theString[0].upper() == 'T'
 
 
 def handleIncomingCall(caller):
+
     if caller.caller == "Unknown":
         caller.caller = xbmcaddon.getLocalizedString(30602)
-    xbmcDialog.notification(xbmcAddon.getLocalizedString(30601) % caller.caller, caller.number)
+    xbmcDialog.notification(xbmcAddon.getLocalizedString(30601) % caller.caller, caller.number, notificationTimeout)
 
 
 def initServices():
