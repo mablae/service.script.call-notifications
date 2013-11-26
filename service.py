@@ -16,7 +16,6 @@ except ImportError, e:
     print "Could not find xbmc modules!"
     sys.exit()
 
-
 clientPool = {}
 serverPool = {}
 resolverPool = {}
@@ -24,8 +23,10 @@ resolverPool = {}
 xbmcAddon = xbmcaddon.Addon()
 xbmcDialog = xbmcgui.Dialog()
 
+
 def parseBoolString(theString):
-  return theString[0].upper()=='T'
+    return theString[0].upper() == 'T'
+
 
 def handleIncomingCall(caller):
     if caller.caller == "Unknown":
@@ -45,7 +46,10 @@ def initServices():
 
     if parseBoolString(xbmcAddon.getSetting("client.ncid.enabled")):
         #xbmc.log("Starting Fritzbox Client", xbmc.LOGDEBUG)
-        clientPool['ncid'] = NcidClient(xbmcAddon.getSetting("client.ncid.host"), port=int(xbmcAddon.getSetting("client.ncid.port")), onCallIncoming=handleIncomingCall)
+        clientPool['ncid'] = NcidClient(host=xbmcAddon.getSetting("client.ncid.host"),
+                                        port=int(xbmcAddon.getSetting("client.ncid.port")),
+                                        onCallIncoming=handleIncomingCall)
+
 
 def bootServices():
     initServices()
@@ -53,10 +57,12 @@ def bootServices():
     l.start(0.5)
     reactor.run(installSignalHandlers=0)
 
+
 def shouldWeExit():
     if xbmc.abortRequested == True:
         xbmc.log("shouldWeExit() - Indeed, we better stop reactor now...", xbmc.LOGDEBUG)
         reactor.stop()
+
 
 if __name__ == "__main__":
     bootServices()
