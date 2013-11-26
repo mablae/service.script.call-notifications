@@ -10,40 +10,29 @@ class FritzboxClientFactory(ReconnectingClientFactory):
     initialDelay = 20
     maxDelay = 30
 
-    def __init__(self, callback):
-        self.callback = callback
+    def __init__(self, onCallIncoming=None):
+        self.onCallIncoming = onCallIncoming
 
     def startedConnecting(self, connector):
         print("Connecting to Fritzbox Callmonitor...")
-        # TODO
-        #if config.plugins.NcidClient.connectionVerbose.value:
-        #        Notifications.AddNotification(MessageBox, _("Connecting to NCID Server..."), type=MessageBox.TYPE_INFO, timeout=2)
 
     def clientConnectionLost(self, connector, reason):
-        #global ncidsrv
         print("Connection to Fritzbox Callmonitor lost\n (%s)\nretrying..." % reason.getErrorMessage())
-        #if not self.hangup_ok and config.plugins.NcidClient.connectionVerbose.value:
-        #        Notifications.AddNotification(MessageBox, _("Connection to NCID Server lost\n (%s)\nretrying...") % reason.getErrorMessage(), type=MessageBox.TYPE_INFO, timeout=config.plugins.NcidClient.timeout.value)
-        ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
-        # config.plugins.NcidClient.enable.value = False
-        ncidsrv = None
+        if not self.hangup_ok:
+            ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
 
     def clientConnectionFailed(self, connector, reason):
-        #global ncidsrv
         print("Connecting to Fritzbox Callmonitor failed\n (%s)\nretrying..." % reason.getErrorMessage())
-        #if config.plugins.NcidClient.connectionVerbose.value:
-        #        Notifications.AddNotification(MessageBox, _("Connecting to NCID Server failed\n (%s)\nretrying...") % reason.getErrorMessage(), type=MessageBox.TYPE_INFO, timeout=config.plugins.NcidClient.timeout.value)
-        ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
-        # config.plugins.NcidClient.enable.value = False
-        #ncidsrv = None
+        if not self.hangup_ok:
+            ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
     def buildProtocol(self, addr):
-        return FritzboxLineReceiver(self.callback)
+        return FritzboxLineReceiver(self.onCallIncoming)
 
 
 class FritzboxLineReceiver(LineReceiver):
-    def __init__(self, callback):
-        self.callback = callback
+    def __init__(self, onCallIncoming):
+        self.onCallIncoming = onCallIncoming
         self.resetValues()
 
     def resetValues(self):
@@ -53,10 +42,6 @@ class FritzboxLineReceiver(LineReceiver):
         self.time = '0001'
         self.line = ''
         self.event = None
-
-    def notify(self):
-        print("notifyCall(" + self.date + "," + self.number + "," + self.caller + ")")
-        self.resetValues()
 
     def lineReceived(self, line):
         print("[FritzboxLineReceiver] lineReceived: %s" % line)
@@ -73,12 +58,12 @@ class FritzboxLineReceiver(LineReceiver):
         # TODO Lookup
         self.caller = "Unkown"
 
-        self.callback(Caller(self.number, self.number))
+        self.onCallIncoming(Caller(self.number, self.number))
 
 
 class FritzboxClient():
-    def __init__(self, hostname, callback):
-        self.callback = callback
+    def __init__(self, hostname, onCallIncoming=None):
+        self.onCallIncoming = onCallIncoming
         self.hostname = hostname
         self.port = 1012
         self.desc = None
@@ -86,7 +71,7 @@ class FritzboxClient():
 
     def connect(self):
         self.abort()
-        factory = FritzboxClientFactory(self.callback)
+        factory = FritzboxClientFactory(self.onCallIncoming)
         self.desc = (factory, reactor.connectTCP(self.hostname, self.port, factory))
 
     def shutdown(self):
