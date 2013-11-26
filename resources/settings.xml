@@ -2,7 +2,7 @@
 <settings>
     <category label="30207">
         <setting label="30213" type="lsep" />
-        <setting label="32015" id="notification.duration" type="slider" option="int" range="1,1,10" default="1" />
+        <setting label="30215" id="notification.duration" type="slider" option="int" range="1,1,10" default="1" />
         <setting label="30209" id="general.pause_playback.enabled" type="bool" default="false" />
         <setting label="30210" id="general.mute_volume.enabled" type="bool" default="false" />
         <setting label="30211" id="general.lower_volume.enabled" type="bool" default="false" />
