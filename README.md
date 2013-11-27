@@ -3,7 +3,6 @@ xbmc.addon.call-notifications
 
 *Call Notifications* does what the name says:
 On incoming phone calls XBMC will show a notification.
-It also allows to pause playback or set volume to predefined level.
 
 The idea and parts of code are based on XBMC Yac Listener developed by @doug.
 
@@ -13,11 +12,11 @@ Any feedback and contributions are welcome!
 
 Features:
 -----------------------------
-
- - Support for different clients
+ 
+ - Show Notification on incoming calls
+ - Support for different CallerID clients/servers
  - Set Volume / Mute Volume / Pause Playback on incoming calls
- - Configurable through XBMC Gui
- - i18n Support (English and German so far)
+ - Fully configurable through XBMC Gui
  - Reverse Search for telephone numbers
 
 
