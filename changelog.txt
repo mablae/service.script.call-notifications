@@ -1,5 +1,11 @@
 
+v. 0.5.2
+ - Cleanup + Basic Type hinting by docblocks
+ - Updated README
+ - Renamed addon ID
+
 v. 0.5.0
+ - Added changelog
  - version bump to 0.5.0
  - Main function added
  - cp error
@@ -12,6 +18,8 @@ v. 0.5.0
  - Changes in NcidClient
  - Removed +x flag from fanart.jpg
  - Updated README.md
+
+v. 0.4.0
  - Version bump to 0.4.0
  - New language strings
  - CS
@@ -41,18 +49,4 @@ v. 0.5.0
  - New Icon
  - Small fix
  - Added xbmc.addon.call-notifications to repo
-
-v. 0.4.0
- - version bump to 0.5.0
- - Main function added
- - cp error
- - new ring icon
- - Added setting for notification timeout
- - Removed unused Crap
- - CodeSyle
- - Changes and cleanup on FritzboxClient
- - Introduce NcidClient in main service.py
- - Changes in NcidClient
- - Removed +x flag from fanart.jpg
- - Updated README.md
 
