@@ -28,11 +28,20 @@ notificationIcon = os.path.join(xbmcAddon.getAddonInfo("path"), "resources", "me
 
 
 def parseBoolString(theString):
+    """
+    parses a string like 'True' to bool value
+    @type theString: str
+    @param theString: String to convert
+    """
     return theString[0].upper() == 'T'
 
 
 def handleIncomingCall(caller):
-
+    """
+    handles the incoming call in the reactor loop
+    @type caller: Caller
+    @param caller: The Caller Object
+    """
     if caller.caller == "Unknown":
         caller.caller = xbmcaddon.getLocalizedString(30602)
 
@@ -62,7 +71,7 @@ def handleIncomingCall(caller):
 
 
 
-def initServices():
+def bootServices():
     if parseBoolString(xbmcAddon.getSetting("server.yac.enabled")):
         xbmc.log("Starting YAC Server ", xbmc.LOGDEBUG)
         serverPool['yac'] = YacServer(int(xbmcAddon.getSetting("server.yac.listen_port")), handleIncomingCall)
@@ -77,10 +86,6 @@ def initServices():
         clientPool['ncid'] = NcidClient(host=xbmcAddon.getSetting("client.ncid.host"),
                                         port=int(xbmcAddon.getSetting("client.ncid.port")),
                                         onCallIncoming=handleIncomingCall)
-
-
-def bootServices():
-    initServices()
     l = task.LoopingCall(shouldWeExit)
     l.start(0.5)
     reactor.run(installSignalHandlers=0)
