@@ -1,5 +1,9 @@
 
+v. 0.5.3
+ - Fixed dependcey error
+
 v. 0.5.2
+ - Version 0.5.2
  - Cleanup + Basic Type hinting by docblocks
  - Updated README
  - Renamed addon ID
