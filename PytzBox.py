@@ -37,6 +37,7 @@ class PytzBox:
     __data_sid_challenge     = 'getpage=../html/login_sid.xml'
     __data_login_legacy      = 'getpage=../html/de/menus/menu2.html&errorpage=../html/index.html&var:lang=de&var:pagename=home&var:menu=home&=&login:command/password={password}'
     __data_login_sid         = 'login:command/response={response}&getpage=../html/login_sid.xml'
+    __url_file_download      = '{protocol}://{host}/nas/cgi-bin/luacgi_notimeout?sid={sid}&script=%2fhttp_file_download.lua&command=httpdownload&cmd_files={path}'
 
     class LoginRequiredException(Exception): pass
     class UnkownLoginVersionException(Exception): pass
@@ -240,10 +241,11 @@ class PytzBox:
 
         class FbAbHandler(xml.sax.ContentHandler):
 
-            def __init__(self):
+            def __init__(self, parent):
                 self.contact_name = ""
                 self.active       = None
-                self.phone_book = dict()
+                self.parent       = parent
+                self.phone_book   = dict()
 
             #noinspection PyUnusedLocal
             def startElement(self,  name, args):
@@ -267,8 +269,9 @@ class PytzBox:
                 if self.active == "imageURL":
                     if self.contact_name in self.phone_book:
                         self.phone_book[self.contact_name]['imageURL'] = content
+                        self.phone_book[self.contact_name]['imageHttpURL'] = self.parent.getDownloadUrl(content)
 
-        handler = FbAbHandler()
+        handler = FbAbHandler(self)
 
         try:
             xml.sax.parseString(xml_phonebook, handler=handler)
@@ -301,6 +304,21 @@ class PytzBox:
 
         return self
 
+
+    def getDownloadUrl(self, base):
+        if base.startswith('file:///var/media/ftp/'):
+            file_path = "/%s://" % base.lstrip('file:///var/media/ftp/')
+            try:
+                return self.__url_file_download.format(
+                        protocol=urllib.quote(self.__protocol),
+                        host=urllib.quote(self.__host),
+                        sid=urllib.quote(self.__sid),
+                        path=urllib.quote(file_path)
+                    )
+            except Exception, e:
+                print e
+        else:
+            return base
 
     def getPhonebook(self, id=0, name='Phonebook'):
 
