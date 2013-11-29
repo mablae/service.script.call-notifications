@@ -249,11 +249,11 @@ class PytzBox:
             def startElement(self,  name, args):
                 if name == "contact":
                     self.contact_name =""
-                elif name == "realName" or name == "number":
+                elif name == "realName" or name == "number" or name =="imageURL":
                     self.active = name
 
             def endElement (self,  name):
-                if name == "realName" or name == "number":
+                if name == "realName" or name == "number" or name =="imageURL":
                     self.active = None
 
             def characters(self,  content):
@@ -264,6 +264,9 @@ class PytzBox:
                 if self.active == "number":
                     if self.contact_name in self.phone_book:
                         self.phone_book[self.contact_name]['numbers'].append(content)
+                if self.active == "imageURL":
+                    if self.contact_name in self.phone_book:
+                        self.phone_book[self.contact_name]['imageURL'] = content
 
         handler = FbAbHandler()
 
