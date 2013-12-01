@@ -9,7 +9,7 @@ from CommonUtils import Caller
 class FritzboxClientFactory(ReconnectingClientFactory):
     initialDelay = 20
     maxDelay = 30
-
+    hangup_ok = False
     def __init__(self, onCallIncoming=None):
         self.onCallIncoming = onCallIncoming
 
