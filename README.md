@@ -5,6 +5,10 @@ Python Klicktel Phonebook API Handler
 
 ### Usage:
 
+#### API-Key:
+
+You may get an api-key from http://openapi.klicktel.de/ for free.
+
 #### Commandline:
 
     Usage:
