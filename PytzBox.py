@@ -12,13 +12,13 @@ __doc__="""
 PytzBox
 
 usage:
-  ./PytzBox.py [--host=<fritz.box>] [--username=<user>] [--password=<pass>] [--action=<getphonebook>]
+  ./PytzBox.py getphonebook [--host=<fritz.box>] [--username=<user>] [--password=<pass>] [--id=<int>]
+  ./PytzBox.py getphonebooklist [--host=<fritz.box>] [--username=<user>] [--password=<pass>]
 
 options:
   --username=<user>     username usually not required
   --password=<pass>     admin password [default: none]
   --host=<fritz.box>    ip address / hostname [default: fritz.box]
-  --action=<action>     what to do ... [default: getphonebook]
 
 """
 
@@ -33,7 +33,8 @@ class PytzBox:
 
     __url_login_webcm        = '{protocol}://{host}/cgi-bin/webcm'
     __url_login_fmwcfg       = '{protocol}://{host}/cgi-bin/firmwarecfg'
-    __url_sid_lua_challenge = '{protocol}://{host}//login_sid.lua'
+    __url_phonebook_list     = '{protocol}://{host}/fon_num/fonbook_select.lua?sid={sid}'
+    __url_sid_lua_challenge  = '{protocol}://{host}//login_sid.lua'
     __data_sid_challenge     = 'getpage=../html/login_sid.xml'
     __data_login_legacy      = 'getpage=../html/de/menus/menu2.html&errorpage=../html/index.html&var:lang=de&var:pagename=home&var:menu=home&=&login:command/password={password}'
     __data_login_sid         = 'login:command/response={response}&getpage=../html/login_sid.xml'
@@ -243,30 +244,29 @@ class PytzBox:
 
             def __init__(self, parent):
                 self.contact_name = ""
-                self.active       = None
+                self.key       = None
                 self.parent       = parent
                 self.phone_book   = dict()
 
             #noinspection PyUnusedLocal
             def startElement(self,  name, args):
                 if name == "contact":
-                    self.contact_name =""
-                elif name == "realName" or name == "number" or name =="imageURL":
-                    self.active = name
+                    self.contact_name = ""
+                self.key = name
 
             def endElement (self,  name):
-                if name == "realName" or name == "number" or name =="imageURL":
-                    self.active = None
+                self.key = None
 
             def characters(self,  content):
-                if self.active == "realName":
+                #print("%s: %s" % (self.key, content))
+                if self.key == "realName":
                     self.contact_name = content
                     if not self.contact_name in self.phone_book:
                         self.phone_book[self.contact_name] = { 'numbers': [] }
-                if self.active == "number":
+                if self.key == "number":
                     if self.contact_name in self.phone_book:
                         self.phone_book[self.contact_name]['numbers'].append(content)
-                if self.active == "imageURL":
+                if self.key == "imageURL":
                     if self.contact_name in self.phone_book:
                         self.phone_book[self.contact_name]['imageURL'] = content
                         self.phone_book[self.contact_name]['imageHttpURL'] = self.parent.getDownloadUrl(content)
@@ -320,6 +320,32 @@ class PytzBox:
         else:
             return base
 
+    def getPhonebookList(self):
+        if self.__sid is None:
+            raise self.LoginRequiredException()
+
+        request = urllib2.Request(
+            self.__url_phonebook_list.format(protocol=self.__protocol, host=self.__host, sid=self.__sid)
+        )
+
+        try:
+            response = urllib2.urlopen(request, timeout=5)
+        except socket, e:
+            raise self.BoxUnreachableException(str(e))
+        except IOError, e:
+            raise self.BoxUnreachableException(str(e))
+        except Exception, e:
+            raise self.RequestFailedException(str(e))
+        else:
+            response =  response.read()
+
+            phonbook_ids = re.findall(r'uiBookid:(\d*)', response)
+
+            if phonbook_ids:
+                return list(set(phonbook_ids))
+
+        return False
+
     def getPhonebook(self, id=0, name='Phonebook'):
 
         if self.__sid is None:
@@ -364,5 +390,7 @@ if __name__ == '__main__':
 
     box = PytzBox(username=arguments['--username'], password=arguments['--password'], host=arguments['--host']).login()
 
-    if arguments['--action'] == 'getphonebook':
-        pprint( box.getPhonebook() )
+    if arguments['getphonebook']:
+        pprint( box.getPhonebook(id=arguments['--id'] and arguments['--id'] or 0) )
+    elif arguments['getphonebooklist']:
+        pprint( box.getPhonebookList() )
