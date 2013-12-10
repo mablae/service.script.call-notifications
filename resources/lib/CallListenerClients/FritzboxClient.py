@@ -50,15 +50,15 @@ class FritzboxLineReceiver(LineReceiver):
         # b'21.11.13 22:36:15;DISCONNECT;0;0;'
         self.line = line
         items = line.decode("utf-8").split(";")
+        if items[1] == "RING":
+            self.date = items[0]
+            self.event = items[1]
+            self.number = items[3]
 
-        self.date = items[0]
-        self.event = items[1]
-        self.number = items[3]
+            # TODO Lookup
+            self.caller = "Unkown"
 
-        # TODO Lookup
-        self.caller = "Unkown"
-
-        self.onCallIncoming(Caller(self.number, self.number))
+            self.onCallIncoming(Caller(self.number, self.number))
 
 
 class FritzboxClient():

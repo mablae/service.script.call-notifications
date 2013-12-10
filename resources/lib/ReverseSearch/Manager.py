@@ -33,9 +33,9 @@ class Manager:
 
 def test():
     mn = Manager()
-    print mn.resolveNumber("042")
-    print mn.resolveNumber("042641331")
-    print mn.resolveNumber("042643113")
+    print mn.resolveNumber("04264 8360833")
+    print mn.resolveNumber("042 641331")
+    print mn.resolveNumber("04 2643113")
     print mn.resolveNumber("04288 392")
 
 

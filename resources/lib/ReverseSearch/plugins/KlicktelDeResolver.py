@@ -5,12 +5,10 @@ import re
 
 from urllib2 import urlopen
 
+from PyKlicktel import klicktel
+
 class KlicktelDeResolver():
     def findName(self, number):
-        data = urlopen("http://www.klicktel.de/rueckwaertssuche/%s" % number)
-        lookup = data.read().decode('utf-8')
-        exp = re.compile(r">1\. (.*)</a></h4>")
-        resultName = exp.search(lookup)
-        if resultName != None:
-            return resultName.group(1).encode("utf-8")
-        return "Unknown"
+        kh = klicktel.Klicktel("56cc41053cea0c9015edf960f34fe413")
+        lookup = kh.invers_search(number, True).dict()["entries"][0]["displayname"]
+        return lookup.encode("utf-8")
