@@ -1,0 +1,95 @@
+# XBMC Media Center language file
+msgid ""
+msgstr ""
+"Project-Id-Version: XBMC-Addons\n"
+"Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
+"POT-Creation-Date: 2013-12-03 11:49+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#Plugin settings strings
+
+msgctxt "#30200"
+msgid "Fritzbox"
+msgstr "Fritzbox"
+
+msgctxt "#30201"
+msgid "Enabled"
+msgstr "Włączone"
+
+msgctxt "#30202"
+msgid "Host"
+msgstr "Host"
+
+msgctxt "#30203"
+msgid "Port"
+msgstr "Port"
+
+msgctxt "#30204"
+msgid "Listen port"
+msgstr "Port nasłuchiwania"
+
+msgctxt "#30205"
+msgid "Ncid client"
+msgstr "Klient Ncid"
+
+msgctxt "#30206"
+msgid "YAC server"
+msgstr "Serwer YAC"
+
+msgctxt "#30207"
+msgid "General"
+msgstr "Ogólne"
+
+msgctxt "#30208"
+msgid "Enable debugging"
+msgstr "Włącz debuggowanie"
+
+msgctxt "#30209"
+msgid "Pause playback"
+msgstr "Wstrzymaj odtwarzanie"
+
+msgctxt "#30210"
+msgid "Mute volume"
+msgstr "Wycisz"
+
+msgctxt "#30211"
+msgid "Lower volume"
+msgstr "Zmniejsz głośność"
+
+msgctxt "#30212"
+msgid "... to"
+msgstr "... do"
+
+msgctxt "#30213"
+msgid "What should happen on incoming calls?"
+msgstr "Co ma się wydarzyć przy połączeniu przychodzącym?"
+
+msgctxt "#30214"
+msgid "Other settings"
+msgstr "Inne ustawienia"
+
+msgctxt "#30215"
+msgid "Notification duration"
+msgstr "Długość powiadomienia"
+
+#messages
+#empty strings from id 30216 to 30599
+
+msgctxt "#30600"
+msgid "Error"
+msgstr "Błąd"
+
+msgctxt "#30601"
+msgid "%s is calling!"
+msgstr "%s dzwoni!"
+
+msgctxt "#30602"
+msgid "Unknown"
+msgstr "Nieznany"
